@@ -6,6 +6,9 @@ import cookieParser from "cookie-parser"
 import { FRONTEND_URL } from "@/configs/env.config"
 import { logger } from "@/utilities/logger.utility"
 
+// Modules import
+import { AuthController } from "./modules/auth"
+
 const app = express()
 
 // Before request middlewares
@@ -30,5 +33,7 @@ app
   .get("/", (req, res) => {
     res.send("Hello World!")
   })
+  // Auth
+  .use("/auth", new AuthController().router)
 
 export { app }

@@ -28,7 +28,8 @@
     // Paths
     "baseUrl": "./",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@generated/*": ["./generated/*"]
     }
   }
 }
