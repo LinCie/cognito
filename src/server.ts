@@ -3,8 +3,8 @@ import cors from "cors"
 import morgan from "morgan"
 import helmet from "helmet"
 import cookieParser from "cookie-parser"
-import { FRONTEND_URL } from "@/config/env.config"
-import { logger } from "@/utilities/logger.utilities"
+import { FRONTEND_URL } from "@/configs/env.config"
+import { logger } from "@/utilities/logger.utility"
 
 const app = express()
 
