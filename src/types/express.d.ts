@@ -1,5 +1,5 @@
 import "express"
-import type { User } from "@prisma/client"
+import type { User } from "@generated/prisma"
 import type { z } from "zod"
 
 declare module "express" {

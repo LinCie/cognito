@@ -5,9 +5,12 @@ import helmet from "helmet"
 import cookieParser from "cookie-parser"
 import { FRONTEND_URL } from "@/configs/env.config"
 import { logger } from "@/utilities/logger.utility"
+import { sessionMiddleware } from "./middlewares/session.middleware"
+import { errorMiddleware } from "./middlewares/error.middleware"
 
 // Modules import
 import { AuthController } from "./modules/auth"
+import { StudentController } from "./modules/student"
 
 const app = express()
 
@@ -35,5 +38,11 @@ app
   })
   // Auth
   .use("/auth", new AuthController().router)
+
+// Protected Routes
+app.use(sessionMiddleware).use("/students", new StudentController().router)
+
+// After request middlewares
+app.use(errorMiddleware)
 
 export { app }

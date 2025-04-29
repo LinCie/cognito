@@ -31,5 +31,7 @@
       "@/*": ["./src/*"],
       "@generated/*": ["./generated/*"]
     }
-  }
+  },
+
+  "include": ["src", "test", "index.ts"]
 }
