@@ -1,12 +1,12 @@
-import { beforeAll, beforeEach, describe, expect, test } from "bun:test"
+import { afterEach, beforeEach, describe, expect, test } from "bun:test"
 import { faker } from "@faker-js/faker"
 import * as argon2 from "argon2"
 import { request } from "test/setup"
 import { prisma } from "@/database"
 
 const fakeUser = {
-  email: faker.internet.email(),
-  password: faker.internet.password(),
+  email: "fake@email.com",
+  password: "Fakepassword1234??",
 }
 
 describe("Auth Route", () => {
@@ -108,9 +108,13 @@ describe("Auth Route", () => {
   })
 
   describe("Signin Route", () => {
-    beforeAll(async () => {
+    beforeEach(async () => {
       const hash = await argon2.hash(fakeUser.password)
       await prisma.user.create({ data: { email: fakeUser.email, hash } })
+    })
+
+    afterEach(async () => {
+      await prisma.user.deleteMany()
     })
 
     test("should return 200 on successful signin", async () => {

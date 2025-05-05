@@ -1,4 +1,4 @@
-import type { NextFunction, Request, Response } from "express"
+import type { Request, Response } from "express"
 import { SESSION_EXPIRY_MS } from "@/configs/shared.config"
 import { Controller } from "@/structures/controller.structure"
 import { BadRequestError } from "@/structures/error.structure"
@@ -19,46 +19,34 @@ class AuthController extends Controller {
     ])
   }
 
-  async signup(req: Request, res: Response, next: NextFunction) {
-    try {
-      const validated = userSchema.safeParse(req.body)
-      if (!validated.success) {
-        throw new BadRequestError("Invalid email and/or password")
-      }
+  async signup(req: Request, res: Response) {
+    const validated = userSchema.safeParse(req.body)
+    if (!validated.success) {
+      throw new BadRequestError("Invalid email and/or password")
+    }
 
-      const token = await this.authService.signup(validated.data)
+    const token = await this.authService.signup(validated.data)
+    this.authService.setSessionTokenCookie(res, token, SESSION_EXPIRY_MS)
+
+    res.status(201).send()
+  }
+
+  async signin(req: Request, res: Response) {
+    const validated = userSchema.safeParse(req.body)
+    if (!validated.success) {
+      throw new BadRequestError("Invalid email and/or password")
+    }
+
+    const token = await this.authService.signin(validated.data)
+    if (token) {
       this.authService.setSessionTokenCookie(res, token, SESSION_EXPIRY_MS)
-
-      return res.status(201).send()
-    } catch (error) {
-      next(error)
+      res.status(200).send()
     }
   }
 
-  async signin(req: Request, res: Response, next: NextFunction) {
-    try {
-      const validated = userSchema.safeParse(req.body)
-      if (!validated.success) {
-        throw new BadRequestError("Invalid email and/or password")
-      }
-
-      const token = await this.authService.signin(validated.data)
-      if (token) {
-        this.authService.setSessionTokenCookie(res, token, SESSION_EXPIRY_MS)
-        return res.status(200).send()
-      }
-    } catch (error) {
-      next(error)
-    }
-  }
-
-  async signout(req: Request, res: Response, next: NextFunction) {
-    try {
-      this.authService.deleteSessionTokenCookie(res)
-      return res.status(204).send()
-    } catch (error) {
-      next(error)
-    }
+  async signout(req: Request, res: Response) {
+    this.authService.deleteSessionTokenCookie(res)
+    res.status(204).send()
   }
 }
 
