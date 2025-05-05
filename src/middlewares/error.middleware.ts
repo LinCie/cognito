@@ -1,11 +1,11 @@
 import type { NextFunction, Request, Response } from "express"
 import { ZodError } from "zod"
+import { logger } from "@/utilities/logger.utility"
 import {
   PrismaClientKnownRequestError,
   PrismaClientValidationError,
-} from "@prisma/client/runtime/library"
+} from "@generated/prisma/runtime/library"
 import { NODE_ENV } from "@/configs/env.config"
-import { logger } from "@/utilities/logger.utility"
 
 function errorMiddleware(
   err: unknown,
@@ -34,11 +34,15 @@ function errorMiddleware(
     switch (err.code) {
       case "P2025":
         res.status(404).send({ message: err.message, meta: err.meta })
-        break
+        return
+
+      case "P2002":
+        res.status(409).send({ message: err.message })
+        return
 
       default:
         res.status(500).send({ message: "Unknown database error occurred" })
-        break
+        return
     }
   }
 
@@ -50,27 +54,27 @@ function errorMiddleware(
   switch (err.constructor.name) {
     case "NotFoundError":
       res.status(404).send({ message: err.message })
-      break
+      return
 
     case "BadRequestError":
       res.status(400).send({ message: err.message })
-      break
+      return
 
     case "UnauthorizedError":
       res.status(401).send({ message: err.message })
-      break
+      return
 
     case "ForbiddenError":
       res.status(403).send({ message: err.message })
-      break
+      return
 
     case "UniqueConstraintError":
       res.status(409).send({ message: err.message })
-      break
+      return
 
     default:
       res.status(500).send({ message: "Internal Server Error" })
-      break
+      return
   }
 }
 

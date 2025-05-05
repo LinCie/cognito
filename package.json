@@ -5,16 +5,19 @@
 	"private": true,
 	"devDependencies": {
 		"@eslint/js": "^9.25.1",
+		"@faker-js/faker": "^9.7.0",
 		"@types/bun": "latest",
 		"@types/cookie-parser": "^1.4.8",
 		"@types/cors": "^2.8.17",
 		"@types/express": "^5.0.1",
 		"@types/morgan": "^1.9.9",
+		"@types/supertest": "^6.0.3",
 		"eslint": "^9.25.1",
 		"eslint-config-prettier": "^10.1.2",
 		"globals": "^16.0.0",
 		"prettier": "^3.5.3",
 		"prisma": "^6.6.0",
+		"supertest": "^7.1.0",
 		"typescript-eslint": "^8.31.0"
 	},
 	"peerDependencies": {
