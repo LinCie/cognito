@@ -22,7 +22,7 @@ class AuthController extends Controller {
   async signup(req: Request, res: Response) {
     const validated = userSchema.safeParse(req.body)
     if (!validated.success) {
-      throw new BadRequestError("Invalid email and/or password")
+      throw new BadRequestError("Invalid username and/or password")
     }
 
     const token = await this.authService.signup(validated.data)
@@ -34,7 +34,7 @@ class AuthController extends Controller {
   async signin(req: Request, res: Response) {
     const validated = userSchema.safeParse(req.body)
     if (!validated.success) {
-      throw new BadRequestError("Invalid email and/or password")
+      throw new BadRequestError("Invalid username and/or password")
     }
 
     const token = await this.authService.signin(validated.data)

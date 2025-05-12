@@ -5,7 +5,7 @@ import { request } from "test/setup"
 import { prisma } from "@/database"
 
 const fakeUser = {
-  email: "fake@email.com",
+  username: "123456789",
   password: "Fakepassword1234??",
 }
 
@@ -33,9 +33,9 @@ describe("Auth Route", () => {
       expect(res.headers["set-cookie"]).toBeDefined()
     })
 
-    test("should return 409 if email is already taken", async () => {
+    test("should return 409 if username is already taken", async () => {
       const hash = await argon2.hash(fakeUser.password)
-      await prisma.user.create({ data: { email: fakeUser.email, hash } })
+      await prisma.user.create({ data: { username: fakeUser.username, hash } })
 
       const res = await request
         .post("/auth/signup")
@@ -47,51 +47,36 @@ describe("Auth Route", () => {
 
     test("should return 400 during bad request", async () => {
       const badUsers = [
-        // Empty email and password
-        { email: "", password: "" },
+        // Empty username and password
+        { username: "", password: "" },
 
-        // Missing email, valid-looking password
+        // Missing username, valid-looking password
         {
-          email: "",
+          username: "",
           password: faker.internet.password(),
         },
 
-        // Malformed email (no @)
+        // Valid username, empty password
+        { username: faker.internet.username(), password: "" },
+
+        // Valid username, whitespace password
+        { username: faker.internet.username(), password: "           " },
+
+        // Valid username, password too short
         {
-          email: "malformedemail",
-          password: faker.internet.password({ length: 12 }),
-        },
-
-        // Malformed email (no TLD)
-        {
-          email: "malformed@email",
-          password: faker.internet.password({ length: 12 }),
-        },
-
-        // Malformed email (short TLD)
-        {
-          email: "malformed@email.c",
-          password: faker.internet.password({ length: 12 }),
-        },
-
-        // Valid email, empty password
-        { email: faker.internet.email(), password: "" },
-
-        // Valid email, whitespace password
-        { email: faker.internet.email(), password: "           " },
-
-        // Valid email, password too short
-        {
-          email: faker.internet.email(),
+          username: faker.internet.username(),
           password: faker.string.alpha({ length: 2 }),
         },
 
-        // Valid email, only numbers
-        { email: faker.internet.email(), password: faker.string.numeric(4) },
-
-        // Valid email, missing number/symbol
+        // Valid username, only numbers
         {
-          email: faker.internet.email(),
+          username: faker.internet.username(),
+          password: faker.string.numeric(4),
+        },
+
+        // Valid username, missing number/symbol
+        {
+          username: faker.internet.username(),
           password: faker.string.alpha({ length: 8, casing: "mixed" }),
         },
       ]
@@ -110,7 +95,7 @@ describe("Auth Route", () => {
   describe("Signin Route", () => {
     beforeEach(async () => {
       const hash = await argon2.hash(fakeUser.password)
-      await prisma.user.create({ data: { email: fakeUser.email, hash } })
+      await prisma.user.create({ data: { username: fakeUser.username, hash } })
     })
 
     afterEach(async () => {
@@ -140,7 +125,7 @@ describe("Auth Route", () => {
         .post("/auth/signin")
         .set("Content-Type", "application/json")
         .send({
-          email: fakeUser.email,
+          username: fakeUser.username,
           password: faker.string.alpha({ length: 4 }),
         })
 
@@ -152,7 +137,7 @@ describe("Auth Route", () => {
         .post("/auth/signin")
         .set("Content-Type", "application/json")
         .send({
-          email: faker.internet.email(),
+          username: faker.internet.username(),
           password: faker.internet.password(),
         })
 

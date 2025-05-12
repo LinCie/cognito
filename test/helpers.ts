@@ -5,7 +5,7 @@ import { AuthService } from "@/modules/auth"
 
 type SessionData = {
   cookie: string[]
-  user: { email: string; password: string }
+  user: { username: string; password: string }
 }
 
 /**
@@ -14,12 +14,12 @@ type SessionData = {
  */
 async function generateSession(): Promise<SessionData> {
   // 1. Generate random credentials
-  const email = faker.internet.email()
+  const username = faker.internet.username()
   const password = faker.internet.password({ length: 12 })
 
   // 2. Create user in DB
   const hash = await argon2.hash(password)
-  const user = await prisma.user.create({ data: { email, hash } })
+  const user = await prisma.user.create({ data: { username, hash } })
 
   // 3. Create a session via AuthService
   const authService = new AuthService()
@@ -31,7 +31,7 @@ async function generateSession(): Promise<SessionData> {
     `session=${token}; Path=/; HttpOnly; SameSite=Lax; Expires=${session.expiresAt.toUTCString()}`,
   ]
 
-  return { cookie, user: { email, password } }
+  return { cookie, user: { username, password } }
 }
 
 export { generateSession }

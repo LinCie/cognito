@@ -122,7 +122,7 @@ class AuthService extends Service {
     try {
       const hash = await argon2.hash(body.password)
       const user = await this.prisma.user.create({
-        data: { hash, email: body.email },
+        data: { hash, username: body.username },
       })
 
       const token = this.generateSessionToken()
@@ -132,7 +132,7 @@ class AuthService extends Service {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === "P2002") {
           throw new UniqueConstraintError(
-            "There is a unique constraint violation, a new user cannot be created with this email"
+            "There is a unique constraint violation, a new user cannot be created with this username"
           )
         }
       }
@@ -142,7 +142,7 @@ class AuthService extends Service {
 
   async signin(body: z.infer<typeof userSchema>) {
     const user = await this.prisma.user.findUniqueOrThrow({
-      where: { email: body.email },
+      where: { username: body.username },
     })
 
     if (await argon2.verify(user.hash, body.password)) {
