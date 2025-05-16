@@ -14,6 +14,7 @@ import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library"
 
 import { Service } from "@/structures/service.structure"
 import { NODE_ENV } from "@/configs/env.config"
+import { SESSION_EXPIRY_MS, SESSION_REFRESH_MS } from "@/configs/shared.config"
 import { UniqueConstraintError } from "@/structures/error.structure"
 import type { userSchema } from "./auth.schema"
 
@@ -40,7 +41,7 @@ class AuthService extends Service {
     const session: Session = {
       id: sessionId,
       userId,
-      expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
+      expiresAt: SESSION_EXPIRY_MS,
     }
     await this.prisma.session.create({
       data: session,
@@ -68,8 +69,8 @@ class AuthService extends Service {
       await this.prisma.session.delete({ where: { id: sessionId } })
       return { session: null, user: null }
     }
-    if (Date.now() >= session.expiresAt.getTime() - 1000 * 60 * 60 * 24 * 15) {
-      session.expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30)
+    if (Date.now() >= session.expiresAt.getTime() - SESSION_REFRESH_MS) {
+      session.expiresAt = SESSION_EXPIRY_MS
       await this.prisma.session.update({
         where: {
           id: session.id,
@@ -106,11 +107,23 @@ class AuthService extends Service {
       path: "/",
       secure: NODE_ENV === "production",
     })
+    response.cookie("loggedIn", "true", {
+      sameSite: "lax",
+      expires: expiresAt,
+      path: "/",
+      secure: NODE_ENV === "production",
+    })
   }
 
   deleteSessionTokenCookie(response: Response): void {
     response.cookie("session", "", {
       httpOnly: true,
+      sameSite: "lax",
+      maxAge: 0,
+      path: "/",
+      secure: NODE_ENV === "production",
+    })
+    response.cookie("loggedIn", "", {
       sameSite: "lax",
       maxAge: 0,
       path: "/",

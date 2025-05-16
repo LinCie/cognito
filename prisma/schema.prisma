@@ -9,14 +9,14 @@ datasource db {
 }
 
 model User {
-  id    Int     @id @default(autoincrement())
-  username String  @unique
-  hash  String
-  name  String?
+  id       Int    @id @default(autoincrement())
+  username String @unique
+  hash     String
 
   Session Session[]
 
-  professor Professor?
+  Profile   Profile?
+  Professor Professor?
   Student   Student?
 }
 
@@ -26,6 +26,15 @@ model Session {
   expiresAt DateTime
 
   user User @relation(references: [id], fields: [userId], onDelete: Cascade)
+}
+
+model Profile {
+  id          Int     @id @default(autoincrement())
+  name        String
+  isProfessor Boolean?
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int  @unique
 }
 
 model Professor {

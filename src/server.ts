@@ -10,6 +10,7 @@ import { errorMiddleware } from "./middlewares/error.middleware"
 
 // Modules import
 import { AuthController } from "./modules/auth"
+import { ProfileController } from "./modules/profile"
 import { StudentController } from "./modules/student"
 
 const app = express()
@@ -40,7 +41,10 @@ app
   .use("/auth", new AuthController().router)
 
 // Protected Routes
-app.use(sessionMiddleware).use("/students", new StudentController().router)
+app
+  .use(sessionMiddleware)
+  .use("/students", new StudentController().router)
+  .use("/profiles", new ProfileController().router)
 
 // After request middlewares
 app.use(errorMiddleware)
