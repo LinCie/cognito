@@ -12,6 +12,9 @@ import { errorMiddleware } from "./middlewares/error.middleware"
 import { AuthController } from "./modules/auth"
 import { ProfileController } from "./modules/profile"
 import { StudentController } from "./modules/student"
+import { ProfessorController } from "./modules/professor"
+import { KelasController } from "./modules/kelas/kelas.controller"
+import { AiController } from "./modules/ai/ai.controller"
 
 const app = express()
 
@@ -44,7 +47,10 @@ app
 app
   .use(sessionMiddleware)
   .use("/students", new StudentController().router)
+  .use("/professors", new ProfessorController().router)
   .use("/profiles", new ProfileController().router)
+  .use("/classes", new KelasController().router)
+  .use("/ai", new AiController().router)
 
 // After request middlewares
 app.use(errorMiddleware)
