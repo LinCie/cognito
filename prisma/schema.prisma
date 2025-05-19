@@ -64,8 +64,8 @@ model Kelas {
   id   Int    @id @default(autoincrement())
   name String
 
-  Professor   Professor? @relation(fields: [professorId], references: [id])
-  professorId Int?
+  Professor   Professor @relation(fields: [professorId], references: [id])
+  professorId Int
 
   student Student[]
 }
