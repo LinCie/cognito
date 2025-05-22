@@ -13,8 +13,10 @@ import { AuthController } from "./modules/auth"
 import { ProfileController } from "./modules/profile"
 import { StudentController } from "./modules/student"
 import { ProfessorController } from "./modules/professor"
-import { KelasController } from "./modules/kelas/kelas.controller"
-import { AiController } from "./modules/ai/ai.controller"
+import { KelasController } from "./modules/kelas"
+import { AiController } from "./modules/ai/"
+import { UploadController } from "./modules/upload"
+import { AssignmentController } from "./modules/assignment"
 
 const app = express()
 
@@ -50,7 +52,9 @@ app
   .use("/professors", new ProfessorController().router)
   .use("/profiles", new ProfileController().router)
   .use("/classes", new KelasController().router)
+  .use("/assignments", new AssignmentController().router)
   .use("/ai", new AiController().router)
+  .use("/upload", new UploadController().router)
 
 // After request middlewares
 app.use(errorMiddleware)

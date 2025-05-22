@@ -11,8 +11,29 @@ class KelasService extends Service {
     })
   }
 
-  async getAll() {
-    return await this.prisma.kelas.findMany()
+  async getAll(as: string, user: User) {
+    switch (as) {
+      case "student": {
+        const student = await this.prisma.student.findUniqueOrThrow({
+          where: { userId: user.id },
+        })
+        return await this.prisma.kelas.findMany({
+          where: { student: { some: { id: student.id } } },
+        })
+      }
+
+      case "professor": {
+        const professor = await this.prisma.professor.findUniqueOrThrow({
+          where: { userId: user.id },
+        })
+        return await this.prisma.kelas.findMany({
+          where: { professorId: professor.id },
+        })
+      }
+
+      default:
+        return await this.prisma.kelas.findMany()
+    }
   }
 
   async getOne(id: number) {

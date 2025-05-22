@@ -31,7 +31,8 @@ export class KelasController extends Controller {
   }
 
   async index(req: Request, res: Response) {
-    const kelas = await this.kelasService.getAll()
+    const { as = "student" } = req.query
+    const kelas = await this.kelasService.getAll(as as string, req.user!)
     res.status(200).send(kelas)
   }
 
