@@ -19,8 +19,12 @@ export class ProfessorService extends Service {
   }
 
   async createProfessor(data: z.infer<typeof professorSchema>, user: User) {
+    const profile = await prisma.profile.findUniqueOrThrow({
+      where: { userId: user.id },
+    })
+
     return await prisma.professor.create({
-      data: { ...data, user: { connect: user } },
+      data: { ...data, profile: { connect: profile } },
     })
   }
 
@@ -36,8 +40,12 @@ export class ProfessorService extends Service {
   }
 
   async isProfessor(id: number, user: User) {
-    const professor = await this.getProfessor(id)
-    if (professor.userId !== user.id) {
+    const professor = await this.prisma.professor.findUniqueOrThrow({
+      where: { id },
+      include: { profile: { include: { user: true } } },
+    })
+
+    if (professor.profile.user.id !== user.id) {
       throw new UnauthorizedError("You're not the professor")
     }
   }

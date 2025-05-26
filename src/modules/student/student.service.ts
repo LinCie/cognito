@@ -13,9 +13,13 @@ class StudentService extends Service {
     return this.prisma.student.findMany({ skip: (page - 1) * show, take: show })
   }
 
-  createStudent(data: z.infer<typeof studentSchema>, user: User) {
+  async createStudent(data: z.infer<typeof studentSchema>, user: User) {
+    const profile = await this.prisma.profile.findUniqueOrThrow({
+      where: { userId: user.id },
+    })
+
     return this.prisma.student.create({
-      data: { user: { connect: user }, ...data },
+      data: { profile: { connect: profile }, ...data },
     })
   }
 
@@ -30,9 +34,10 @@ class StudentService extends Service {
   async hasAccess(id: number, user: User) {
     const student = await this.prisma.student.findUniqueOrThrow({
       where: { id },
+      include: { profile: { include: { user: true } } },
     })
 
-    if (student.userId !== user.id) {
+    if (student.profile.user.id !== user.id) {
       throw new UnauthorizedError("You're not the owner of this student")
     }
   }

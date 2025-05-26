@@ -6,20 +6,28 @@ import { UnauthorizedError } from "@/structures/error.structure"
 
 class KelasService extends Service {
   async create(data: z.infer<typeof kelasSchema>, user: User) {
-    const professor = await this.prisma.professor.findUniqueOrThrow({
+    const profile = await this.prisma.profile.findUniqueOrThrow({
       where: { userId: user.id },
     })
 
+    const professor = await this.prisma.professor.findUniqueOrThrow({
+      where: { profileId: profile.id },
+    })
+
     return this.prisma.kelas.create({
-      data: { ...data, professor: { connect: { id: professor.id } } },
+      data: { ...data, professor: { connect: professor } },
     })
   }
 
   async getAll(as: string, user: User) {
+    const profile = await this.prisma.profile.findUniqueOrThrow({
+      where: { userId: user.id },
+    })
+
     switch (as) {
       case "student": {
         const student = await this.prisma.student.findUniqueOrThrow({
-          where: { userId: user.id },
+          where: { profileId: profile.id },
         })
         return this.prisma.kelas.findMany({
           where: { student: { some: { id: student.id } } },
@@ -28,7 +36,7 @@ class KelasService extends Service {
 
       case "professor": {
         const professor = await this.prisma.professor.findUniqueOrThrow({
-          where: { userId: user.id },
+          where: { profileId: profile.id },
         })
         return this.prisma.kelas.findMany({
           where: { professorId: professor.id },
@@ -43,7 +51,11 @@ class KelasService extends Service {
   getOne(id: number) {
     return this.prisma.kelas.findUniqueOrThrow({
       where: { id },
-      include: { assignment: true, student: true, professor: true },
+      include: {
+        assignment: true,
+        student: { include: { profile: true } },
+        professor: { include: { profile: true } },
+      },
     })
   }
 
@@ -58,9 +70,11 @@ class KelasService extends Service {
   async isProfessor(id: number, user: User) {
     const kelas = await this.prisma.kelas.findUniqueOrThrow({
       where: { id },
-      include: { professor: true },
+      include: {
+        professor: { include: { profile: { include: { user: true } } } },
+      },
     })
-    if (kelas.professor.userId !== user.id) {
+    if (kelas.professor.profile.user.id !== user.id) {
       throw new UnauthorizedError("You're not the professor of this kelas")
     }
   }
