@@ -1,11 +1,7 @@
 import { z } from "zod"
 
 const studentSchema = z.object({
-  name: z.string({
-    required_error: "Name is required",
-    invalid_type_error: "Name must be a string",
-  }),
-  studentNumber: z.string({
+  number: z.string({
     required_error: "Student number is required",
     invalid_type_error: "Student number must be a string",
   }),

@@ -65,15 +65,15 @@ model Kelas {
   id   Int    @id @default(autoincrement())
   name String
 
-  Professor   Professor @relation(fields: [professorId], references: [id])
+  professor   Professor @relation(fields: [professorId], references: [id])
   professorId Int
 
   student    Student[]
-  Assignment Assignment[]
+  assignment Assignment[]
 }
 
 model Submission {
-  id          Int      @id @default(autoincrement())
+  id          Int    @id @default(autoincrement())
   attachments Json[]
 
   student   Student @relation(fields: [studentId], references: [id])

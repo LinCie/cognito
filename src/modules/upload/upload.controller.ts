@@ -1,4 +1,5 @@
 import type { Request, Response } from "express"
+import path from "path"
 import multer from "multer"
 import { Controller } from "@/structures/controller.structure"
 import { BadRequestError } from "@/structures/error.structure"
@@ -6,7 +7,7 @@ import { UploadService } from "./upload.service"
 
 class UploadController extends Controller {
   public readonly uploadService = new UploadService()
-  private upload = multer({ dest: "/uploads" })
+  private upload = multer({ dest: path.resolve("uploads") })
 
   constructor() {
     super()

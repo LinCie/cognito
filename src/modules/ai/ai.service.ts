@@ -40,24 +40,26 @@ class AiService extends Service {
   }
 
   public async getResponse(prompt: string, user: User) {
-    const profile = await this.prisma.profile.findUniqueOrThrow({
-      where: { userId: user.id },
-    })
-
-    const student = await this.prisma.student.findUniqueOrThrow({
-      where: { userId: user.id },
-      include: {
-        kelas: { include: { Assignment: true } },
-      },
-    })
-
-    let assignments: Assignment[] = []
-    for (const kelas of student.kelas) {
-      assignments = assignments.concat(kelas.Assignment)
-    }
-
     let chat = this.session.get(user.id)
+
     if (chat === undefined) {
+      const [profile, student] = await this.prisma.$transaction([
+        this.prisma.profile.findUniqueOrThrow({
+          where: { userId: user.id },
+        }),
+        this.prisma.student.findUniqueOrThrow({
+          where: { userId: user.id },
+          include: {
+            kelas: { include: { Assignment: true } },
+          },
+        }),
+      ])
+
+      let assignments: Assignment[] = []
+      for (const kelas of student.kelas) {
+        assignments = assignments.concat(kelas.Assignment)
+      }
+
       chat = this.createChat(user)
       const response = await chat.sendMessage({
         message: this.generatePersonality(profile.name, assignments, prompt),
