@@ -12,7 +12,7 @@ interface RouteDefinition {
 }
 
 abstract class Controller {
-  public readonly router = express.Router()
+  public readonly router = express.Router({ mergeParams: true })
 
   protected bindRoutes(routes: RouteDefinition[]): void {
     routes.forEach(({ method, path, handler, middlewares, schema }) => {

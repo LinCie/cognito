@@ -46,26 +46,33 @@ export class AssignmentController extends Controller {
   }
 
   async index(req: Request, res: Response) {
-    const assignments = await this.assignmentService.findMany()
+    const { classId } = req.params
+    const assignments = await this.assignmentService.getAssignments(
+      Number(classId)
+    )
 
     res.send(assignments)
   }
 
   async show(req: Request, res: Response) {
     const { id } = req.params
-    const assignment = await this.assignmentService.findOne(Number(id))
+    const assignment = await this.assignmentService.getAssignment(Number(id))
 
     res.send(assignment)
   }
 
   async create(req: Request, res: Response) {
-    const assignment = await this.assignmentService.create(req.validated)
+    const { classId } = req.params
+    const assignment = await this.assignmentService.createAssignment(
+      Number(classId),
+      req.validated
+    )
     res.status(201).send(assignment)
   }
 
   async update(req: Request, res: Response) {
     const { id } = req.params
-    const assignment = await this.assignmentService.update(
+    const assignment = await this.assignmentService.updateAssignment(
       Number(id),
       req.validated
     )
@@ -75,17 +82,15 @@ export class AssignmentController extends Controller {
 
   async destroy(req: Request, res: Response) {
     const { id } = req.params
-    await this.assignmentService.delete(Number(id))
+    await this.assignmentService.deleteAssignment(Number(id))
 
     res.status(204).send()
   }
 
   async hasAccessMiddleware(req: Request, res: Response, next: NextFunction) {
     const user = req.user!
-    const { id } = req.params
-
-    await this.professorService.getProfessor(Number(id))
-    await this.assignmentService.isProfessor(Number(id), user)
+    const { classId } = req.params
+    await this.assignmentService.hasAccess(Number(classId), user)
 
     next()
   }

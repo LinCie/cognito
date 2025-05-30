@@ -53,6 +53,7 @@ class KelasService extends Service {
       where: { id },
       include: {
         assignment: true,
+        post: true,
         student: { include: { profile: true } },
         professor: { include: { profile: true } },
       },

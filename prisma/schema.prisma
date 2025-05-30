@@ -59,7 +59,7 @@ model Student {
   profileId Int     @unique
 
   kelas      Kelas[]
-  Submission Submission[]
+  submission Submission[]
 }
 
 model Kelas {
@@ -71,6 +71,7 @@ model Kelas {
 
   student    Student[]
   assignment Assignment[]
+  post       Post[]
 }
 
 model Submission {
@@ -80,7 +81,7 @@ model Submission {
   student   Student @relation(fields: [studentId], references: [id])
   studentId Int
 
-  Assignment   Assignment @relation(fields: [assignmentId], references: [id])
+  assignment   Assignment @relation(fields: [assignmentId], references: [id])
   assignmentId Int
 }
 
@@ -90,8 +91,20 @@ model Assignment {
   description String
   deadline    DateTime
   attachments Json[]
+  date        DateTime
 
   kelas      Kelas        @relation(fields: [kelasId], references: [id])
   kelasId    Int
-  Submission Submission[]
+  submission Submission[]
+}
+
+model Post {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  attachments Json[]
+  date        DateTime
+
+  kelas   Kelas @relation(fields: [kelasId], references: [id])
+  kelasId Int
 }

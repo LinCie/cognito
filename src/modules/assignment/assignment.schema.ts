@@ -5,9 +5,8 @@ const assignmentSchema = z.object({
   description: z
     .string()
     .min(2, "Description must be at least 2 characters long"),
-  deadline: z.date().min(new Date(), "Deadline must be after current date"),
+  deadline: z.coerce.date().min(new Date(), "Deadline must be after current date"),
   attachments: z.array(z.object({ name: z.string(), url: z.string() })),
-  kelasId: z.number(),
 })
 
 const partialAssignmentSchema = assignmentSchema.partial()
