@@ -68,6 +68,13 @@ class KelasService extends Service {
     return this.prisma.kelas.delete({ where: { id } })
   }
 
+  join(id: number, studentId: number) {
+    return this.prisma.kelas.update({
+      where: { id },
+      data: { student: { connect: { id: studentId } } },
+    })
+  }
+
   async isProfessor(id: number, user: User) {
     const kelas = await this.prisma.kelas.findUniqueOrThrow({
       where: { id },

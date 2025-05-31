@@ -9,4 +9,6 @@ const kelasSchema = z.object({
 
 const partialKelasSchema = kelasSchema.partial()
 
-export { kelasSchema, partialKelasSchema }
+const joinKelasSchema = z.object({studentId: z.number()})
+
+export { kelasSchema, partialKelasSchema, joinKelasSchema }

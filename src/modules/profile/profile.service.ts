@@ -8,6 +8,7 @@ class ProfileService extends Service {
   getSelf(userId: number) {
     return this.prisma.profile.findUniqueOrThrow({
       where: { userId },
+      include: { student: true, professor: true },
     })
   }
 

@@ -14,6 +14,7 @@ export class KelasController extends Controller {
       { method: "get", path: "/", handler: this.index },
       { method: "get", path: "/:id", handler: this.show },
       { method: "post", path: "/", handler: this.create, schema: kelasSchema },
+      { method: "post", path: "/:id/join", handler: this.join },
       {
         method: "patch",
         path: "/:id",
@@ -46,6 +47,13 @@ export class KelasController extends Controller {
     const data = req.body
     const kelas = await this.kelasService.create(data, req.user!)
     res.status(201).send(kelas)
+  }
+
+  async join(req: Request, res: Response) {
+    const id = req.params.id
+    const studentId = req.body.studentId
+    const kelas = await this.kelasService.join(Number(id), Number(studentId))
+    res.status(200).send(kelas)
   }
 
   async update(req: Request, res: Response) {

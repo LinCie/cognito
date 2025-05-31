@@ -31,7 +31,7 @@ model Profile {
   name        String
   isProfessor Boolean?
 
-  user   User @relation(fields: [userId], references: [id])
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId Int  @unique
 
   professor Professor?
@@ -43,7 +43,7 @@ model Professor {
   number String
   major  String
 
-  profile   Profile @relation(fields: [profileId], references: [id])
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   profileId Int     @unique
 
   kelas Kelas[]
@@ -55,7 +55,7 @@ model Student {
   major  String
   class  String
 
-  profile   Profile @relation(fields: [profileId], references: [id])
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   profileId Int     @unique
 
   kelas      Kelas[]
@@ -66,7 +66,7 @@ model Kelas {
   id   Int    @id @default(autoincrement())
   name String
 
-  professor   Professor @relation(fields: [professorId], references: [id])
+  professor   Professor @relation(fields: [professorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   professorId Int
 
   student    Student[]
@@ -78,10 +78,10 @@ model Submission {
   id          Int    @id @default(autoincrement())
   attachments Json[]
 
-  student   Student @relation(fields: [studentId], references: [id])
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   studentId Int
 
-  assignment   Assignment @relation(fields: [assignmentId], references: [id])
+  assignment   Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   assignmentId Int
 }
 
@@ -93,7 +93,7 @@ model Assignment {
   attachments Json[]
   date        DateTime
 
-  kelas      Kelas        @relation(fields: [kelasId], references: [id])
+  kelas      Kelas        @relation(fields: [kelasId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   kelasId    Int
   submission Submission[]
 }
@@ -105,6 +105,6 @@ model Post {
   attachments Json[]
   date        DateTime
 
-  kelas   Kelas @relation(fields: [kelasId], references: [id])
+  kelas   Kelas @relation(fields: [kelasId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   kelasId Int
 }
