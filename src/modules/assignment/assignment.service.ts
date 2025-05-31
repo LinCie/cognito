@@ -9,7 +9,10 @@ import { UnauthorizedError } from "@/structures/error.structure"
 
 class AssignmentService extends Service {
   public async getAssignment(id: number) {
-    return await this.prisma.assignment.findUniqueOrThrow({ where: { id } })
+    return await this.prisma.assignment.findUniqueOrThrow({
+      where: { id },
+      include: { submission: { include: { student: true } } },
+    })
   }
 
   public async getAssignments(classId: number) {
