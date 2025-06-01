@@ -17,7 +17,7 @@ class AiController extends Controller {
 
   async index(req: Request, res: Response) {
     const response = await this.aiService.getResponse(req.validated, req.user!)
-    res.status(200).send(response)
+    res.status(200).send({ response })
   }
 }
 
