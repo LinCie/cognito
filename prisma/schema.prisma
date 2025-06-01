@@ -60,6 +60,7 @@ model Student {
 
   kelas      Kelas[]
   submission Submission[]
+  answers    Answer[]
 }
 
 model Kelas {
@@ -93,9 +94,10 @@ model Assignment {
   attachments Json[]
   date        DateTime
 
-  kelas      Kelas        @relation(fields: [kelasId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  kelasId    Int
-  submission Submission[]
+  kelas         Kelas          @relation(fields: [kelasId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  kelasId       Int
+  submission    Submission[]
+  questionnaire Questionnaire?
 }
 
 model Post {
@@ -107,4 +109,25 @@ model Post {
 
   kelas   Kelas @relation(fields: [kelasId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   kelasId Int
+}
+
+model Questionnaire {
+  id        Int    @id @default(autoincrement())
+  questions Json[]
+
+  assignment   Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  assignmentId Int        @unique
+
+  answers Answer[]
+}
+
+model Answer {
+  id      Int    @id @default(autoincrement())
+  answers Json[]
+
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  studentId Int
+
+  questionnaire   Questionnaire @relation(fields: [questionnaireId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  questionnaireId Int
 }

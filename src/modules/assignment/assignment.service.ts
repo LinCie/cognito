@@ -11,7 +11,10 @@ class AssignmentService extends Service {
   public async getAssignment(id: number) {
     return await this.prisma.assignment.findUniqueOrThrow({
       where: { id },
-      include: { submission: { include: { student: true } } },
+      include: {
+        submission: { include: { student: true } },
+        questionnaire: { include: { answers: { include: { student: true } } } },
+      },
     })
   }
 

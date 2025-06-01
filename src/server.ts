@@ -19,6 +19,8 @@ import { UploadController } from "./modules/upload"
 import { AssignmentController } from "./modules/assignment"
 import { PostController } from "./modules/post"
 import { SubmissionController } from "./modules/submission"
+import { QuestionnaireController } from "./modules/questionnaire"
+import { AnswerController } from "./modules/answer"
 
 const app = express()
 
@@ -55,7 +57,18 @@ app
   .use("/profiles", new ProfileController().router)
   .use("/classes/:classId/posts", new PostController().router)
   .use("/classes/:classId/assignments", new AssignmentController().router)
-  .use("/classes/:classId/assignments/:assignmentId/submissions", new SubmissionController().router)
+  .use(
+    "/classes/:classId/assignments/:assignmentId/submissions",
+    new SubmissionController().router
+  )
+  .use(
+    "/classes/:classId/assignments/:assignmentId/questionnaires",
+    new QuestionnaireController().router
+  )
+  .use(
+    "/classes/:classId/assignments/:assignmentId/questionnaires/:questionnaireId/answers",
+    new AnswerController().router
+  )
   .use("/classes", new KelasController().router)
   .use("/ai", new AiController().router)
   .use("/upload", new UploadController().router)
