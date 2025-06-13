@@ -21,6 +21,7 @@ import { PostController } from "./modules/post"
 import { SubmissionController } from "./modules/submission"
 import { QuestionnaireController } from "./modules/questionnaire"
 import { AnswerController } from "./modules/answer"
+import { PresenceController } from "./modules/presence"
 
 const app = express()
 
@@ -69,6 +70,7 @@ app
     "/classes/:classId/assignments/:assignmentId/questionnaires/:questionnaireId/answers",
     new AnswerController().router
   )
+  .use("/classes/:classId/presences", new PresenceController().router)
   .use("/classes", new KelasController().router)
   .use("/ai", new AiController().router)
   .use("/upload", new UploadController().router)

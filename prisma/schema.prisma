@@ -61,6 +61,7 @@ model Student {
   kelas      Kelas[]
   submission Submission[]
   answers    Answer[]
+  presence   Presence[]
 }
 
 model Kelas {
@@ -73,6 +74,7 @@ model Kelas {
   student    Student[]
   assignment Assignment[]
   post       Post[]
+  presence   Presence[]
 }
 
 model Submission {
@@ -130,4 +132,14 @@ model Answer {
 
   questionnaire   Questionnaire @relation(fields: [questionnaireId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   questionnaireId Int
+}
+
+model Presence {
+  id       Int      @id @default(autoincrement())
+  deadline DateTime
+
+  kelas   Kelas @relation(fields: [kelasId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  kelasId Int
+
+  student Student[]
 }

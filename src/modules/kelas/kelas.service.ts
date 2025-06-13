@@ -54,6 +54,7 @@ class KelasService extends Service {
       include: {
         assignment: true,
         post: true,
+        presence: { include: { student: { include: { profile: true } } } },
         student: { include: { profile: true } },
         professor: { include: { profile: true } },
       },
